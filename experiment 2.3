@@ -1,0 +1,56 @@
+Instruction:
+Perform the following tasks in the Nimbus - 
+
+
+Java Programs Using Lambda Expressions and Stream Operations
+Part a: Sorting Employee Objects Using Lambda Expressions
+Objective:
+To develop a Java program that sorts a list of Employee objects based on fields like name, age, or salary using lambda expressions.
+
+Explanation:
+This task introduces the use of lambda expressions to simplify sorting logic:
+
+Create an Employee class with fields: name, age, and salary.
+
+Store multiple Employee objects in a List<Employee>.
+
+Use Collections.sort() or List.sort() with lambda expressions to:
+
+Sort by name (alphabetically).
+Sort by age (ascending).
+Sort by salary (descending or ascending).
+This helps demonstrate concise and readable sorting using functional programming.
+Part b: Filtering and Sorting Students Using Streams
+Objective:
+To create a Java program that uses lambda expressions and stream operations to filter students scoring above 75%, sort them by marks, and display their names.
+
+Explanation:
+This task highlights:
+
+Functional-style filtering using stream().filter().
+Sorting using stream().sorted().
+Mapping to a specific field using map() to extract student names.
+Steps:
+Create a Student class with name and marks.
+Use List<Student> to store data.
+Filter students with marks > 75%.
+Sort the filtered list by marks.
+Display names using forEach() or collect().
+Part c: Stream Operations on Product Dataset
+Objective:
+To process a large dataset of products using Java streams for grouping, finding maximum, and calculating averages.
+
+Explanation:
+This question focuses on efficient data processing using Stream and Collectors:
+
+Create a Product class with name, price, and category.
+Store the dataset in a List<Product>.
+Perform the following using stream operations:
+Group products by category using Collectors.groupingBy().
+Find the most expensive product in each category using Collectors.maxBy().
+Calculate the average price of all products using Collectors.averagingDouble().
+This task demonstrates:
+
+Efficient and readable data processing.
+Aggregation and transformation using stream APIs.
+Real-world usage of lambda expressions in data analytics.
