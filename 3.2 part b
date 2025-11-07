@@ -1,0 +1,146 @@
+Part (b): Hibernate Application for Student CRUD Operations
+Objective
+
+To perform Create, Read, Update, and Delete (CRUD) operations on a Student entity using Hibernate ORM and a MySQL database.
+
+Explanation
+
+Hibernate maps Java classes to database tables using annotations like:
+
+@Entity, @Id, @Column
+and provides an API for data manipulation via SessionFactory, Session, and Transaction.
+
+Database Setup (MySQL)
+CREATE DATABASE studentdb;
+USE studentdb;
+
+CREATE TABLE Student (
+    id INT PRIMARY KEY,
+    name VARCHAR(50),
+    age INT
+);
+
+File Structure
+HibernateCRUD/
+│
+├── src/
+│   ├── Student.java
+│   ├── HibernateUtil.java
+│   └── MainApp.java
+└── resources/
+    └── hibernate.cfg.xml
+
+Student.java
+import javax.persistence.*;
+
+@Entity
+@Table(name = "Student")
+public class Student {
+
+    @Id
+    private int id;
+
+    @Column(name = "name")
+    private String name;
+
+    @Column(name = "age")
+    private int age;
+
+    public Student() {}
+
+    public Student(int id, String name, int age) {
+        this.id = id;
+        this.name = name;
+        this.age = age;
+    }
+
+    // Getters and setters
+    public int getId() { return id; }
+    public void setId(int id) { this.id = id; }
+    public String getName() { return name; }
+    public void setName(String name) { this.name = name; }
+    public int getAge() { return age; }
+    public void setAge(int age) { this.age = age; }
+}
+
+HibernateUtil.java
+import org.hibernate.SessionFactory;
+import org.hibernate.cfg.Configuration;
+
+public class HibernateUtil {
+    private static final SessionFactory sessionFactory;
+
+    static {
+        try {
+            sessionFactory = new Configuration().configure("hibernate.cfg.xml").buildSessionFactory();
+        } catch (Throwable ex) {
+            System.err.println("Failed to create SessionFactory: " + ex);
+            throw new ExceptionInInitializerError(ex);
+        }
+    }
+
+    public static SessionFactory getSessionFactory() {
+        return sessionFactory;
+    }
+}
+
+hibernate.cfg.xml
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-configuration PUBLIC
+        "-//Hibernate/Hibernate Configuration DTD 3.0//EN"
+        "http://hibernate.sourceforge.net/hibernate-configuration-3.0.dtd">
+
+<hibernate-configuration>
+    <session-factory>
+        <!-- JDBC connection settings -->
+        <property name="hibernate.connection.driver_class">com.mysql.cj.jdbc.Driver</property>
+        <property name="hibernate.connection.url">jdbc:mysql://localhost:3306/studentdb</property>
+        <property name="hibernate.connection.username">root</property>
+        <property name="hibernate.connection.password">yourpassword</property>
+
+        <!-- Hibernate settings -->
+        <property name="hibernate.dialect">org.hibernate.dialect.MySQL8Dialect</property>
+        <property name="hibernate.hbm2ddl.auto">update</property>
+        <property name="show_sql">true</property>
+
+        <!-- Entity mapping -->
+        <mapping class="Student"/>
+    </session-factory>
+</hibernate-configuration>
+
+MainApp.java
+import org.hibernate.*;
+import java.util.*;
+
+public class MainApp {
+    public static void main(String[] args) {
+        SessionFactory factory = HibernateUtil.getSessionFactory();
+        Session session = factory.openSession();
+        Transaction tx = session.beginTransaction();
+
+        // CREATE
+        Student s1 = new Student(1, "Amit", 21);
+        session.save(s1);
+
+        // READ
+        Student s = session.get(Student.class, 1);
+        System.out.println("Student Found: " + s.getName());
+
+        // UPDATE
+        s.setAge(22);
+        session.update(s);
+
+        // DELETE
+        session.delete(s);
+
+        tx.commit();
+        session.close();
+        factory.close();
+    }
+}
+
+Output Example
+Hibernate: insert into Student (age, name, id) values (?, ?, ?)
+Student Found: Amit
+Hibernate: update Student set age=?, name=? where id=?
+Hibernate: delete from Student where id=?
