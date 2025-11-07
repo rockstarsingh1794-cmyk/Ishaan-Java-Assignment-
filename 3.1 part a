@@ -1,0 +1,60 @@
+//Part (a)
+
+HTML Form (login.html)
+<!DOCTYPE html>
+<html>
+<head>
+    <title>User Login</title>
+</head>
+<body>
+    <h2>User Login</h2>
+    <form action="LoginServlet" method="post">
+        Username: <input type="text" name="username" required><br><br>
+        Password: <input type="password" name="password" required><br><br>
+        <input type="submit" value="Login">
+    </form>
+</body>
+</html>
+
+Servlet (LoginServlet.java)
+import java.io.*;
+import javax.servlet.*;
+import javax.servlet.http.*;
+
+public class LoginServlet extends HttpServlet {
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+
+        response.setContentType("text/html");
+        PrintWriter out = response.getWriter();
+
+        String user = request.getParameter("username");
+        String pass = request.getParameter("password");
+
+        // Simple validation (hardcoded)
+        if (user.equals("admin") && pass.equals("1234")) {
+            out.println("<h2>Welcome, " + user + "!</h2>");
+        } else {
+            out.println("<h3>Invalid username or password!</h3>");
+        }
+    }
+}
+
+<web-app>
+    <servlet>
+        <servlet-name>LoginServlet</servlet-name>
+        <servlet-class>LoginServlet</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>LoginServlet</servlet-name>
+        <url-pattern>/LoginServlet</url-pattern>
+    </servlet-mapping>
+</web-app>
+
+
+✅ Output:
+
+Correct login → “Welcome, admin!”
+
+Incorrect login → “Invalid username or password!”
