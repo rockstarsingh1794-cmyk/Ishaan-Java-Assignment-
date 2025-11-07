@@ -1,0 +1,103 @@
+Part (a): Dependency Injection in Spring Using Java-Based Configuration
+Objective
+
+To create a Spring application that demonstrates Dependency Injection (DI) using Java-based configuration (no XML).
+
+Explanation
+
+This experiment shows how Spring can manage dependencies automatically using annotations such as:
+
+@Configuration – to define configuration class
+
+@Bean – to declare beans
+
+AnnotationConfigApplicationContext – to initialize context
+
+You will create:
+
+Course class
+
+Student class (depends on Course)
+
+AppConfig (configuration class)
+
+MainApp (to test DI)
+
+File Structure
+SpringDI/
+│
+├── src/
+│   ├── Course.java
+│   ├── Student.java
+│   ├── AppConfig.java
+│   └── MainApp.java
+
+Course.java
+public class Course {
+    private String courseName;
+
+    public Course(String courseName) {
+        this.courseName = courseName;
+    }
+
+    public void displayCourse() {
+        System.out.println("Course enrolled: " + courseName);
+    }
+}
+
+Student.java
+public class Student {
+    private Course course;
+
+    // Constructor-based Dependency Injection
+    public Student(Course course) {
+        this.course = course;
+    }
+
+    public void showDetails() {
+        System.out.println("Student details loaded successfully!");
+        course.displayCourse();
+    }
+}
+
+AppConfig.java
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+
+@Configuration
+public class AppConfig {
+
+    @Bean
+    public Course course() {
+        return new Course("Spring Framework with Java Config");
+    }
+
+    @Bean
+    public Student student() {
+        return new Student(course());
+    }
+}
+
+MainApp.java
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+
+public class MainApp {
+    public static void main(String[] args) {
+        ApplicationContext context = new AnnotationConfigApplicationContext(AppConfig.class);
+
+        Student student = context.getBean(Student.class);
+        student.showDetails();
+    }
+}
+
+Output
+Student details loaded successfully!
+Course enrolled: Spring Framework with Java Config
+
+Concepts Demonstrated
+Concept	Description
+@Configuration	Defines Spring beans using Java code
+@Bean	Declares and configures beans
+Dependency Injection	Spring automatically wires objects
+AnnotationConfigApplicationContext	Initializes the Spring context
