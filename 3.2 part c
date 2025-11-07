@@ -1,0 +1,137 @@
+Part (c): Student Attendance Portal Using JSP and Servlet
+Objective
+
+To develop a simple Student Attendance Portal using JSP for collecting input and Servlet for handling data insertion into a MySQL database.
+
+Concept Overview
+
+This part demonstrates:
+
+How JSP handles user interface (frontend)
+
+How Servlet processes the form data (backend)
+
+How JDBC is used to store the data into a database
+
+The Model–View–Controller (MVC) structure — where JSP = View, Servlet = Controller, DB = Model
+
+Database Setup (MySQL)
+
+Run these SQL commands in MySQL before running the project:
+
+CREATE DATABASE school;
+USE school;
+
+CREATE TABLE Attendance (
+    StudentID INT,
+    Date DATE,
+    Status VARCHAR(10)
+);
+
+
+This creates a table to record each student's attendance date and status.
+
+Project Structure
+StudentAttendance/
+│
+├── attendance.jsp
+├── WEB-INF/
+│   └── web.xml
+└── src/
+    └── AttendanceServlet.java
+
+JSP Page — attendance.jsp
+
+This page serves as the frontend (View) where the user enters student details.
+
+<%@ page language="java" contentType="text/html; charset=ISO-8859-1" %>
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Student Attendance Portal</title>
+</head>
+<body>
+    <h2>Mark Student Attendance</h2>
+    <form action="AttendanceServlet" method="post">
+        Student ID: <input type="text" name="studentid" required><br><br>
+        Date: <input type="date" name="date" required><br><br>
+        Status: 
+        <select name="status" required>
+            <option value="Present">Present</option>
+            <option value="Absent">Absent</option>
+        </select><br><br>
+
+        <input type="submit" value="Submit Attendance">
+    </form>
+</body>
+</html>
+
+
+Explanation:
+
+The form collects Student ID, Date, and Status
+
+Submits data to AttendanceServlet using POST
+
+Servlet — AttendanceServlet.java
+
+This servlet acts as the controller, taking form input, connecting to MySQL via JDBC, and inserting data.
+
+import java.io.*;
+import java.sql.*;
+import javax.servlet.*;
+import javax.servlet.http.*;
+
+public class AttendanceServlet extends HttpServlet {
+
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+
+        response.setContentType("text/html");
+        PrintWriter out = response.getWriter();
+
+        // Step 1: Collect data from JSP form
+        String id = request.getParameter("studentid");
+        String date = request.getParameter("date");
+        String status = request.getParameter("status");
+
+        // Step 2: JDBC connection details
+        String url = "jdbc:mysql://localhost:3306/school";
+        String user = "root"; // change as per your system
+        String pass = "yourpassword"; // change as per your MySQL password
+
+        try {
+            // Step 3: Load JDBC driver
+            Class.forName("com.mysql.cj.jdbc.Driver");
+
+            // Step 4: Establish connection
+            Connection con = DriverManager.getConnection(url, user, pass);
+
+            // Step 5: Prepare SQL statement
+            String sql = "INSERT INTO Attendance (StudentID, Date, Status) VALUES (?, ?, ?)";
+            PreparedStatement ps = con.prepareStatement(sql);
+            ps.setInt(1, Integer.parseInt(id));
+            ps.setString(2, date);
+            ps.setString(3, status);
+
+            // Step 6: Execute insertion
+            int result = ps.executeUpdate();
+
+            // Step 7: Generate response
+            if (result > 0) {
+                out.println("<html><body>");
+                out.println("<h2>Attendance recorded successfully!</h2>");
+                out.println("<a href='attendance.jsp'>Mark Another Attendance</a>");
+                out.println("</body></html>");
+            } else {
+                out.println("<h3>Failed to record attendance!</h3>");
+            }
+
+            // Step 8: Close connection
+            con.close();
+
+        } catch (Exception e) {
+            out.println("<h3>Error: " + e.getMessage() + "</h3>");
+        }
+    }
+}
